@@ -11,3 +11,5 @@ Thumbs.db
 /previa/
 /ABRIR-PREVIA.html
 /Claude outputs/
+
+**/*.quarto_ipynb

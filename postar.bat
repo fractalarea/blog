@@ -2,6 +2,17 @@
 setlocal
 cd /d "%~dp0"
 
+rem Esta maquina tem o PATH sem o C:\Windows\System32, e varios programas
+rem dependem dele - o proprio Quarto executa CMD para localizar o R.
+rem Reforcamos aqui; o setlocal limita o efeito a esta janela.
+set "PATH=%PATH%;%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0"
+
+rem O instalador do R nao acrescenta o R ao PATH. Se houver um R instalado no
+rem lugar padrao, acrescentamos aqui para o Quarto encontra-lo.
+set "RDIR="
+for /d %%d in ("%ProgramFiles%\R\R-*") do set "RDIR=%%d"
+if defined RDIR set "PATH=%PATH%;%RDIR%\bin\x64;%RDIR%\bin"
+
 rem O chcp e opcional: se o PATH estiver sem o System32 ele nao existe,
 rem e nada aqui depende dele.
 if exist "%SystemRoot%\System32\chcp.com" "%SystemRoot%\System32\chcp.com" 65001 >nul 2>&1
