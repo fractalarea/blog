@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 
-rem O chcp fica opcional: se o PATH estiver sem o System32 ele nao existe,
+rem O chcp e opcional: se o PATH estiver sem o System32 ele nao existe,
 rem e nada aqui depende dele.
 if exist "%SystemRoot%\System32\chcp.com" "%SystemRoot%\System32\chcp.com" 65001 >nul 2>&1
 
@@ -12,7 +12,7 @@ echo   Publicando: Notas de Joao Mello
 echo ================================
 echo.
 
-rem Procura o git: primeiro no PATH, depois nos lugares onde ele costuma ser
+rem Procura o git no PATH e, se nao achar, nos lugares onde ele costuma ser
 rem instalado. Nao usamos "where", que tambem mora no System32.
 set "GIT="
 git --version >nul 2>&1
@@ -27,13 +27,31 @@ call quarto --version >nul 2>&1
 if not errorlevel 1 set "QUARTO=quarto"
 if not defined QUARTO if exist "%LOCALAPPDATA%\Programs\Quarto\bin\quarto.cmd" set "QUARTO=%LOCALAPPDATA%\Programs\Quarto\bin\quarto.cmd"
 if not defined QUARTO if exist "%ProgramFiles%\Quarto\bin\quarto.cmd" set "QUARTO=%ProgramFiles%\Quarto\bin\quarto.cmd"
-if not defined QUARTO goto :sem_quarto
+if not defined QUARTO goto :quarto_ausente
 
 echo [1/4] Renderizando o site (executa os chunks de R e Python)...
 echo.
 call "%QUARTO%" render
 if errorlevel 1 goto :erro_render
+goto :mudancas
 
+:quarto_ausente
+echo AVISO: o Quarto nao esta instalado nesta maquina.
+echo.
+echo Sem ele nao da para executar chunks de R ou Python. Mas ainda da para
+echo publicar post que seja so texto e matematica, e enviar commits que ja
+echo estao feitos e nao foram para o GitHub.
+echo.
+echo Se o que voce quer publicar TEM chunk de codigo, responda N, instale o
+echo Quarto em https://quarto.org/docs/get-started/ e rode isto de novo.
+echo.
+set "SEGUIR="
+set /p "SEGUIR=Continuar sem renderizar? (s/N): "
+if /i not "%SEGUIR%"=="s" goto :cancelado
+echo.
+echo [1/4] Renderizacao pulada.
+
+:mudancas
 echo.
 echo [2/4] O que mudou:
 echo.
@@ -79,21 +97,15 @@ goto :fim
 :sem_git
 echo ERRO: nao encontrei o Git.
 echo.
-echo Se voce ainda nao instalou: https://git-scm.com/download/win
-echo Se ja instalou, o PATH do Windows pode estar quebrado. Confira com:
-echo.
-echo    echo %%PATH%%
-echo.
-echo Ele precisa conter C:\Windows\System32 e a pasta cmd do Git.
+echo Se ainda nao instalou: https://git-scm.com/download/win
+echo Se ja instalou, o PATH do Windows pode estar quebrado.
+echo Rode o diagnostico.bat que esta nesta pasta.
 goto :fim
 
-:sem_quarto
-echo ERRO: nao encontrei o Quarto.
+:cancelado
 echo.
-echo Instale em https://quarto.org/docs/get-started/ e reabra esta janela.
-echo.
-echo Observacao: post sem chunk de codigo dispensa o Quarto. Nesse caso
-echo publique com: git add -A   depois   git commit -m "..."   depois   git push
+echo Cancelado. Nada foi enviado.
+echo Instale o Quarto em https://quarto.org/docs/get-started/
 goto :fim
 
 :erro_render
