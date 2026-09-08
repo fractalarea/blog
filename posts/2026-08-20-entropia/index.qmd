@@ -1,0 +1,93 @@
+---
+title: "Entropia como o único funcional razoável"
+description: |
+  Os axiomas de Shannon, a demonstração de que eles determinam $H$ a menos de
+  constante, e o que a concavidade custa em bits --- com o cálculo feito em Python.
+author: "João Paulo"
+date: "2026-08-20"
+categories: [teoria da informação, estatística, Python]
+bibliography: ../../references.bib
+---
+
+## O funcional
+
+Para $p = (p_1,\dots,p_m)$ no simplexo $\Delta_{m-1}$, a entropia de Shannon é
+
+$$
+H(p) \;=\; -\sum_{i=1}^{m} p_i \log_2 p_i ,
+$$ {#eq-shannon}
+
+com a convenção $0 \log_2 0 = 0$, justificada por continuidade.
+
+::: {#thm-shannon}
+## Caracterização axiomática
+
+Seja $(H_m)_{m \ge 2}$ uma família de funções $H_m : \Delta_{m-1} \to \R$ tal que
+
+1. $H_m$ é contínua;
+2. $m \mapsto H_m(1/m,\dots,1/m)$ é crescente;
+3. vale o agrupamento: se $p$ se parte em blocos $B_1,\dots,B_r$ com pesos
+   $w_j = \sum_{i \in B_j} p_i$, então
+   $H_m(p) = H_r(w) + \sum_{j} w_j \, H_{\abs{B_j}}\!\left( p\restr{B_j} / w_j \right)$.
+
+Então existe $c > 0$ com $H_m(p) = -c \sum_i p_i \log_2 p_i$ para todo $m$ e todo $p$.
+:::
+
+::: {.proof}
+Escreva $A(m) = H_m(1/m,\dots,1/m)$. O axioma 3 aplicado à uniforme em $m^k$
+elementos, particionada em $m^{k-1}$ blocos de tamanho $m$, dá
+$A(m^k) = k\,A(m)$. Dados $m, n, k$, escolha $\ell$ com
+$m^\ell \le n^k < m^{\ell+1}$; a monotonicidade do axioma 2 e a aditividade
+anterior fornecem $\ell/k \le A(n)/A(m) \le (\ell+1)/k$, e o mesmo enquadramento
+vale para $\log n / \log m$. Fazendo $k \to \infty$ conclui-se
+$A(n) = c \log_2 n$. O caso de pesos racionais sai do axioma 3 aplicado a uma
+uniforme sobre $\sum_i q_i$ elementos agrupada segundo $p$; a continuidade do
+axioma 1 estende ao simplexo todo. Ver @cover2006, cap. 2.
+:::
+
+## O custo da concavidade
+
+$H$ é estritamente côncava, então para qualquer mistura vale
+$H(\lambda p + (1-\lambda) q) \ge \lambda H(p) + (1-\lambda) H(q)$. A folga é
+exatamente uma divergência de Jensen--Shannon:
+
+$$
+H\!\left(\tfrac{p+q}{2}\right) - \tfrac{1}{2}\bigl(H(p) + H(q)\bigr)
+\;=\; \mathrm{JS}(p \,\|\, q) \;\in\; [0, 1] .
+$$ {#eq-js}
+
+```{python}
+#| label: fig-concavidade
+#| fig-cap: "Folga de concavidade ao interpolar entre uma distribuição concentrada e a uniforme em 8 pontos."
+
+import math
+import matplotlib.pyplot as plt
+
+def H(p):
+    return -sum(pi * math.log2(pi) for pi in p if pi > 0)
+
+m = 8
+p = [0.93] + [0.01] * (m - 1)
+q = [1 / m] * m
+
+lam = [i / 200 for i in range(201)]
+mix = [[l * pi + (1 - l) * qi for pi, qi in zip(p, q)] for l in lam]
+real = [H(r) for r in mix]
+reta = [l * H(p) + (1 - l) * H(q) for l in lam]
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.plot(lam, real, color="#1b4965", label=r"$H(\lambda p + (1-\lambda) q)$")
+ax.plot(lam, reta, color="#c1666b", ls="--", label=r"$\lambda H(p) + (1-\lambda) H(q)$")
+ax.fill_between(lam, reta, real, color="#1b4965", alpha=0.10)
+ax.set_xlabel(r"$\lambda$"); ax.set_ylabel("bits"); ax.legend(frameon=False)
+plt.show()
+```
+
+```{python}
+folga = max(r - s for r, s in zip(real, reta))
+print(f"folga máxima: {folga:.4f} bits, em lambda = {lam[max(range(len(lam)), key=lambda i: real[i] - reta[i])]:.2f}")
+```
+
+A folga é limitada por $1$ bit --- o custo de codificar de qual das duas fontes
+veio cada símbolo --- e o limite é atingido quando $p$ e $q$ têm suportes
+disjuntos.

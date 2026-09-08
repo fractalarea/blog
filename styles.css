@@ -1,0 +1,26 @@
+/* Ajustes mínimos sobre o tema cosmo. */
+
+body { font-size: 1.02rem; line-height: 1.65; }
+
+/* Texto de matemática um pouco maior que o padrão do MathJax. */
+mjx-container[jax="CHTML"][display="true"] { margin: 1.1em 0; }
+
+/* Ambientes de teorema com barra lateral, sem caixa colorida. */
+.theorem, .lemma, .corollary, .proposition, .conjecture,
+.definition, .example, .exercise, .remark {
+  border-left: 3px solid #b8c4cf;
+  padding: 0.2em 0 0.2em 1em;
+  margin: 1.3em 0;
+}
+.theorem, .lemma, .corollary, .proposition, .conjecture { font-style: italic; }
+.theorem strong, .lemma strong, .corollary strong, .proposition strong,
+.conjecture strong, .definition strong, .example strong,
+.exercise strong, .remark strong { font-style: normal; }
+
+.proof { margin: 1.3em 0; }
+
+/* Blocos de código mais discretos. */
+div.sourceCode { border-radius: 4px; font-size: 0.9em; }
+
+/* Listagem de posts. */
+.quarto-listing .listing-title { font-weight: 600; }

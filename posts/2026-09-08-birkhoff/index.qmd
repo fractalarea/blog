@@ -1,0 +1,128 @@
+---
+title: "O teorema ergódico de Birkhoff, visto de perto"
+description: |
+  Enunciado, esboço da demonstração e uma verificação numérica com a rotação
+  irracional --- incluindo o motivo pelo qual a mesma verificação falha para a
+  transformação de dobra.
+author: "João Paulo"
+date: "2026-09-08"
+categories: [teoria ergódica, sistemas dinâmicos, R]
+bibliography: ../../references.bib
+---
+
+## O enunciado
+
+Seja $(X,\mathcal{B},\mu)$ um espaço de probabilidade e $T : X \to X$ uma
+transformação mensurável que **preserva** $\mu$, isto é, $\mu(T^{-1}B) = \mu(B)$
+para todo $B \in \mathcal{B}$. Para $f \in L^1(\mu)$ escrevemos a média de Birkhoff
+
+$$
+A_n f(x) \;=\; \frac{1}{n} \sum_{k=0}^{n-1} f\bigl(T^k x\bigr).
+$$ {#eq-media}
+
+::: {#def-ergodica}
+## Ergodicidade
+
+$T$ é *ergódica* com respeito a $\mu$ quando todo $B \in \mathcal{B}$ com
+$T^{-1}B = B$ satisfaz $\mu(B) \in \set{0,1}$.
+:::
+
+::: {#thm-birkhoff}
+## Convergência pontual das médias
+
+Se $T$ preserva $\mu$ e $f \in L^1(\mu)$, então $A_n f$ converge $\mu$-q.t.p. e em
+$L^1(\mu)$ para uma função $\bar f \in L^1(\mu)$ que satisfaz
+$\bar f \circ T = \bar f$ q.t.p. e $\int_X \bar f \dd\mu = \int_X f \dd\mu$.
+Se além disso $T$ é ergódica, então
+
+$$
+\bar f(x) \;=\; \int_X f \dd\mu \qquad \text{para } \mu\text{-q.t.p. } x .
+$$ {#eq-ergodico}
+:::
+
+A hipótese de ergodicidade é o que transforma @eq-ergodico num enunciado útil:
+sem ela, $\bar f$ é apenas a esperança condicional $\E[f \mid \mathcal{I}]$
+relativa à $\sigma$-álgebra $\mathcal{I}$ dos conjuntos invariantes.
+
+## Esboço da demonstração
+
+::: {.proof}
+O passo não trivial é o *lema ergódico maximal*: para $f \in L^1(\mu)$, pondo
+$S_n f = \sum_{k<n} f \circ T^k$ e $M_N f = \max_{1 \le n \le N} S_n f$, vale
+
+$$
+\int_{\set{M_N f > 0}} f \dd\mu \;\ge\; 0 ,
+$$ {#eq-maximal}
+
+para todo $N$. Dado @eq-maximal, fixe $\alpha < \beta$ racionais e considere
+
+$$
+E_{\alpha,\beta} \;=\; \set{ x \in X : \liminf_n A_n f(x) < \alpha < \beta < \limsup_n A_n f(x) } .
+$$
+
+O conjunto $E_{\alpha,\beta}$ é $T$-invariante. Aplicando @eq-maximal às funções
+$f - \beta$ e $\alpha - f$ restritas a $E_{\alpha,\beta}$ obtém-se
+$\beta \mu(E_{\alpha,\beta}) \le \int_{E_{\alpha,\beta}} f \dd\mu \le \alpha \mu(E_{\alpha,\beta})$,
+e como $\alpha < \beta$ isso força $\mu(E_{\alpha,\beta}) = 0$. A união sobre os
+pares racionais $\alpha < \beta$ é enumerável, logo $\liminf_n A_n f = \limsup_n A_n f$
+q.t.p., o que define $\bar f$. A convergência em $L^1$ e a igualdade das integrais
+saem do teorema da convergência dominada aplicado a truncamentos de $f$; ver
+@walters1982 para os detalhes.
+:::
+
+## Verificação numérica
+
+Tome $X = [0,1)$ com a medida de Lebesgue e a rotação
+$T_\alpha(x) = x + \alpha \pmod 1$. Para $\alpha$ irracional, $T_\alpha$ é
+*unicamente ergódica*: a convergência em @eq-ergodico vale para **todo** $x$, e não
+apenas q.t.p. Usamos $\alpha = (\sqrt{5}-1)/2$ e $f = \ind_{[0,1/3)}$, de modo que
+$\int f \dd\Leb = 1/3$.
+
+```{r}
+#| label: fig-rotacao
+#| fig-cap: "Médias de Birkhoff de $f = \\ind_{[0,1/3)}$ sob a rotação irracional, para três órbitas distintas. A linha tracejada é $1/3$."
+
+alpha <- (sqrt(5) - 1) / 2
+n     <- 5000
+orbita <- function(x0, n) (x0 + alpha * (0:(n - 1))) %% 1
+medias <- function(x0, n) cumsum(orbita(x0, n) < 1/3) / seq_len(n)
+
+x0s <- c(0, 0.4142136, 0.7071068)
+M   <- sapply(x0s, medias, n = n)
+
+matplot(seq_len(n), M, type = "l", lty = 1, lwd = 1.2,
+        col = c("#1b4965", "#c1666b", "#5f8d4e"),
+        xlab = "n", ylab = expression(A[n]*f), ylim = c(0.25, 0.45), log = "x")
+abline(h = 1/3, lty = 2)
+legend("topright", legend = sprintf("x0 = %.4f", x0s), lty = 1, lwd = 1.2,
+       col = c("#1b4965", "#c1666b", "#5f8d4e"), bty = "n")
+```
+
+O erro decai devagar --- para rotações por números de tipo limitado como a razão
+áurea, $\abs{A_n f - 1/3} = O(n^{-1} \log n)$, uma taxa que não vem do
+@thm-birkhoff, mas da teoria de discrepância:
+
+```{r}
+erro <- abs(sapply(c(10, 100, 1000, 5000), function(k) medias(0, k)[k]) - 1/3)
+data.frame(n = c(10, 100, 1000, 5000), erro = signif(erro, 3))
+```
+
+## Por que a transformação de dobra não pode ser simulada assim
+
+::: {.remark}
+A transformação $T(x) = 2x \pmod 1$ é ergódica --- de fato, misturadora --- em
+relação a Lebesgue, mas em aritmética de ponto flutuante binária cada iteração
+desloca a mantissa uma casa à esquerda e injeta um zero à direita. Depois de $53$
+passos qualquer `double` foi zerado: a órbita numérica cai no ponto fixo $0$ e a
+média de Birkhoff converge para $f(0)$, não para $\int f$. O fenômeno não é ruído
+de arredondamento, é exato.
+:::
+
+```{r}
+x <- 0.1234567890123
+for (k in 1:60) x <- (2 * x) %% 1
+x
+```
+
+Simular sistemas expansores exige aritmética de precisão crescente, ou trabalhar
+com a densidade em vez da órbita --- assunto para outro post.

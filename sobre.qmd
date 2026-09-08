@@ -1,0 +1,15 @@
+---
+title: "Sobre"
+toc: false
+---
+
+João Paulo é professor de ciência de dados na Fatec Baixada Santista --
+Rubens Lara, em Santos (SP), onde coordena um grupo de pesquisa e orienta
+iniciação científica. Interesses de pesquisa: estatística, lógica matemática,
+sistemas dinâmicos e teoria ergódica.
+
+Este blog reúne notas de aula, rascunhos de pesquisa e experimentos
+computacionais. Os posts são escritos em Quarto; o código que aparece neles
+é executado de verdade na hora da renderização.
+
+Contato: <fractarea@gmail.com>

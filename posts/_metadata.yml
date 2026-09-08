@@ -1,0 +1,4 @@
+# Opções válidas para todos os posts.
+title-block-banner: false
+toc: true
+freeze: auto

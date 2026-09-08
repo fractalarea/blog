@@ -1,0 +1,77 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "!README.md"
+
+lang: pt
+
+website:
+  title: "Notas de João Paulo"
+  description: "Matemática, estatística e ciência de dados"
+  site-url: "https://SEU-USUARIO.github.io/blog"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Início
+      - href: sobre.qmd
+        text: Sobre
+    right:
+      - icon: rss
+        href: index.xml
+  page-footer:
+    center: "Construído com [Quarto](https://quarto.org). Conteúdo sob [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.pt-br)."
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    html-math-method: mathjax
+    include-before-body: _macros.html
+    code-tools: true
+    code-copy: true
+    highlight-style: github
+    fig-width: 7
+    fig-height: 4.5
+    fig-align: center
+
+execute:
+  freeze: auto
+  echo: true
+  warning: false
+
+language:
+  crossref-thm-title: "Teorema"
+  crossref-lem-title: "Lema"
+  crossref-cor-title: "Corolário"
+  crossref-prp-title: "Proposição"
+  crossref-cnj-title: "Conjectura"
+  crossref-def-title: "Definição"
+  crossref-exm-title: "Exemplo"
+  crossref-exr-title: "Exercício"
+  crossref-proof-title: "Demonstração"
+  crossref-remark-title: "Observação"
+  crossref-solution-title: "Solução"
+  crossref-eq-prefix: "Eq."
+  crossref-fig-title: "Figura"
+  crossref-tbl-title: "Tabela"
+  crossref-fig-prefix: "Figura"
+  crossref-tbl-prefix: "Tabela"
+  crossref-sec-prefix: "Seção"
+  toc-title-document: "Nesta página"
+  toc-title-website: "Nesta página"
+  section-title-footnotes: "Notas"
+  title-block-published: "Publicado em"
+  title-block-modified: "Atualizado em"
+  title-block-categories: "Categorias"
+  listing-page-order-by-date-desc: "Mais recentes"
+  listing-page-order-by-date-asc: "Mais antigos"
+  listing-page-field-date: "Data"
+  listing-page-field-title: "Título"
+  listing-page-field-categories: "Categorias"
+  listing-page-minutes-compact: "{0} min"
+  listing-page-no-matches: "Nenhum resultado"
+  search-text-placeholder: "Buscar"

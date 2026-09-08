@@ -1,0 +1,10 @@
+/_site/
+/.quarto/
+.Rproj.user
+.Rhistory
+.RData
+.Renviron
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
