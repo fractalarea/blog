@@ -1,0 +1,17 @@
+{
+  "hash": "8326dbb3b3dde6edc93f6eaf7757f59e",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Título do post\"\ndescription: |\n  Uma ou duas frases. Aparece na listagem da capa e na prévia de link.\nauthor: \"João Mello\"\ndate: \"2026-09-10\"\ncategories: [categoria um, categoria dois]\nbibliography: ../../references.bib\n# draft: true      # descomente para escrever sem aparecer na capa\n---\n\n## Uma seção\n\nTexto normal. Matemática no meio da frase com $f \\in L^1(\\mu)$, e as macros de\n`_macros.html` valem aqui: $\\norm{f}_1$, $\\E[X]$, $\\R$, $\\dd\\mu$.\n\nEquação numerada e referenciável:\n\n$$\n\\norm{f}_1 \\;=\\; \\int_X \\abs{f} \\dd\\mu\n$$ {#eq-exemplo}\n\nE aí no texto se escreve @eq-exemplo.\n\n::: {#thm-exemplo}\n## Nome do teorema\nEnunciado. Referencie depois com `@thm-exemplo`.\n:::\n\n::: {.proof}\nDemonstração. Outros ambientes: `.remark`, `.solution`; e os prefixos\n`#lem-`, `#cor-`, `#prp-`, `#cnj-`, `#def-`, `#exm-`, `#exr-`.\n:::\n\nCitação: @walters1982 diz que sim.\n\n## Código que roda de verdade\n\nSó use se tiver R (ou Python) instalado: chunk com código exige\n`quarto render` na sua máquina antes do push.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nplot(1:10, (1:10)^2, type = \"l\", col = \"#1b4965\", xlab = \"n\", ylab = expression(n^2))\n```\n\n::: {.cell-output-display}\n![Legenda da figura.](index_files/figure-html/fig-exemplo-1.png){#fig-exemplo width=672}\n:::\n:::\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
