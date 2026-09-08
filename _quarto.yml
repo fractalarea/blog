@@ -10,7 +10,7 @@ lang: pt
 website:
   title: "Notas de João Mello"
   description: "Uma coisa de cada vez e tudo ao mesmo tempo"
-  site-url: "https://SEU-USUARIO.github.io/blog"
+  site-url: "https://fractalarea.github.io/blog"
   navbar:
     left:
       - href: index.qmd

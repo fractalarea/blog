@@ -1,6 +1,5 @@
 ---
 title: "Notas de João Mello"
-subtitle: "Uma coisa de cada vez e tudo ao mesmo tempo"
 description: "Uma coisa de cada vez e tudo ao mesmo tempo"
 listing:
   contents: posts
