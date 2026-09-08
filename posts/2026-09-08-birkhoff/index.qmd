@@ -4,7 +4,7 @@ description: |
   Enunciado, esboço da demonstração e uma verificação numérica com a rotação
   irracional --- incluindo o motivo pelo qual a mesma verificação falha para a
   transformação de dobra.
-author: "João Paulo"
+author: "João Mello"
 date: "2026-09-08"
 categories: [teoria ergódica, sistemas dinâmicos, R]
 bibliography: ../../references.bib

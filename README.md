@@ -71,7 +71,7 @@ Cabeçalho mínimo:
 ---
 title: "Título"
 description: "Uma ou duas linhas; aparece na listagem da capa."
-author: "João Paulo"
+author: "João Mello"
 date: "2026-09-08"
 categories: [teoria ergódica, R]
 bibliography: ../../references.bib

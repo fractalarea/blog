@@ -3,7 +3,7 @@ title: "Entropia como o único funcional razoável"
 description: |
   Os axiomas de Shannon, a demonstração de que eles determinam $H$ a menos de
   constante, e o que a concavidade custa em bits --- com o cálculo feito em Python.
-author: "João Paulo"
+author: "João Mello"
 date: "2026-08-20"
 categories: [teoria da informação, estatística, Python]
 bibliography: ../../references.bib
