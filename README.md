@@ -101,6 +101,30 @@ Se esquecer o `quarto render`, o build no GitHub falha. E cuidado: **qualquer**
 mudança no arquivo invalida o `_freeze`, inclusive editar só o `title:` ou o
 `author:` --- o hash é sobre o arquivo inteiro, não só sobre o código.
 
+### O atalho: postar.bat
+
+Com o Quarto e o Git instalados, o fluxo inteiro cabe num duplo clique em
+`postar.bat`, na raiz da pasta. Ele:
+
+1. renderiza o site (executando os chunks e atualizando o `_freeze`);
+2. mostra o que mudou;
+3. pede a mensagem do commit e registra;
+4. envia para o GitHub e imprime o endereço do site e o do build.
+
+Se a renderização falhar, ele **para antes de commitar** --- nada quebrado vai
+para o ar. Se não houver arquivo novo, ele ainda assim tenta o `git push`, porque
+pode haver commit antigo esperando.
+
+Também aceita a mensagem como argumento, se você chamar pelo terminal:
+
+```
+postar.bat "Post novo: teorema de Poincaré"
+```
+
+Rotina completa de um post com código, então: copie `posts/_modelo/` para
+`posts/AAAA-MM-DD-slug/`, escreva o `index.qmd`, confira com `quarto preview`, e
+dê um duplo clique em `postar.bat`.
+
 ## 5. Tema claro e escuro
 
 `_quarto.yml` declara dois temas (`cosmo` e `darkly`); o botão de alternância
