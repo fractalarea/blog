@@ -1,0 +1,46 @@
+---
+title: "Título do post"
+description: |
+  Uma ou duas frases. Aparece na listagem da capa e na prévia de link.
+author: "João Mello"
+date: "2026-09-10"
+categories: [categoria um, categoria dois]
+bibliography: ../../references.bib
+# draft: true      # descomente para escrever sem aparecer na capa
+---
+
+## Uma seção
+
+Texto normal. Matemática no meio da frase com $f \in L^1(\mu)$, e as macros de
+`_macros.html` valem aqui: $\norm{f}_1$, $\E[X]$, $\R$, $\dd\mu$.
+
+Equação numerada e referenciável:
+
+$$
+\norm{f}_1 \;=\; \int_X \abs{f} \dd\mu
+$$ {#eq-exemplo}
+
+E aí no texto se escreve @eq-exemplo.
+
+::: {#thm-exemplo}
+## Nome do teorema
+Enunciado. Referencie depois com `@thm-exemplo`.
+:::
+
+::: {.proof}
+Demonstração. Outros ambientes: `.remark`, `.solution`; e os prefixos
+`#lem-`, `#cor-`, `#prp-`, `#cnj-`, `#def-`, `#exm-`, `#exr-`.
+:::
+
+Citação: @walters1982 diz que sim.
+
+## Código que roda de verdade
+
+Só use se tiver R (ou Python) instalado: chunk com código exige
+`quarto render` na sua máquina antes do push.
+
+```{r}
+#| label: fig-exemplo
+#| fig-cap: "Legenda da figura."
+plot(1:10, (1:10)^2, type = "l", col = "#1b4965", xlab = "n", ylab = expression(n^2))
+```

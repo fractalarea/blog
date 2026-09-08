@@ -61,25 +61,45 @@ sempre que mudar código de um post — senão o CI tenta executar o chunk e fal
 
 ## 4. Escrever um post novo
 
-```
-posts/AAAA-MM-DD-slug/index.qmd
+Copie `posts/_modelo/` para `posts/AAAA-MM-DD-slug/` e edite o `index.qmd`. A
+pasta `_modelo` começa com `_`, então o Quarto a ignora: ela não vira página nem
+aparece na capa. Imagens e dados do post ficam na mesma pasta dele; a capa lista
+tudo de `posts/` sozinha, em ordem de data.
+
+Para escrever sem publicar, ponha `draft: true` no cabeçalho.
+
+### Post sem código: nada para instalar
+
+Se o post é só texto, LaTeX, teoremas e citações --- sem nenhum chunk ```` ```{r} ````
+ou ```` ```{python} ```` --- o Quarto nem carrega o motor do knitr, e o GitHub monta
+o site sozinho. Basta:
+
+```bash
+git add .
+git commit -m "Post novo: <título>"
+git push
 ```
 
-Cabeçalho mínimo:
+Dá até para criar o arquivo pelo site do GitHub, sem tocar na sua máquina:
+*Add file → Create new file*, com o caminho `posts/AAAA-MM-DD-slug/index.qmd`.
+Ao commitar, o build dispara.
 
-```yaml
----
-title: "Título"
-description: "Uma ou duas linhas; aparece na listagem da capa."
-author: "João Mello"
-date: "2026-09-08"
-categories: [teoria ergódica, R]
-bibliography: ../../references.bib
----
+### Post com código: renderize antes
+
+Chunks de R ou Python precisam ser executados, e o CI **não** tem R nem Python
+--- ele lê os resultados de `_freeze/`. Então:
+
+```bash
+quarto preview                    # escreva vendo o resultado
+quarto render                     # grava os resultados em _freeze/
+git add .                         # inclui o _freeze atualizado
+git commit -m "Post novo: <título>"
+git push
 ```
 
-Imagens e dados do post ficam na mesma pasta dele. A capa (`index.qmd`) lista
-tudo de `posts/` automaticamente, em ordem de data.
+Se esquecer o `quarto render`, o build no GitHub falha. E cuidado: **qualquer**
+mudança no arquivo invalida o `_freeze`, inclusive editar só o `title:` ou o
+`author:` --- o hash é sobre o arquivo inteiro, não só sobre o código.
 
 ## 5. Tema claro e escuro
 
