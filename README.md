@@ -15,12 +15,22 @@ GitHub publica o HTML.
 No VS Code, instale a extensão *Quarto*; no RStudio (≥ 2022.07) o suporte já vem
 embutido e o botão **Render** funciona direto.
 
-## 2. Trabalhar localmente
+## 2. Abrir localmente
+
+**Sem instalar nada (agora):** abra `previa\index.html` com duplo clique. É uma
+cópia autossuficiente do site --- um retrato congelado, só para ver o resultado.
+Ela **não** se atualiza quando você edita os `.qmd`.
+
+**Do jeito de trabalhar de verdade** (depois de instalar o Quarto), no terminal
+dentro da pasta do blog:
 
 ```bash
 quarto preview     # abre o navegador e recarrega a cada gravação
 quarto render      # gera o site inteiro em _site/
 ```
+
+No RStudio, basta abrir a pasta e clicar em **Render**; no VS Code, o botão
+aparece com a extensão *Quarto* instalada.
 
 ## 3. Publicar (uma vez)
 
@@ -67,7 +77,17 @@ bibliography: ../../references.bib
 Imagens e dados do post ficam na mesma pasta dele. A capa (`index.qmd`) lista
 tudo de `posts/` automaticamente, em ordem de data.
 
-## 5. Matemática
+## 5. Tema claro e escuro
+
+`_quarto.yml` declara dois temas (`cosmo` e `darkly`); o botão de alternância
+aparece sozinho na barra superior. Para trocar a dupla, escolha entre os temas
+do Bootswatch: <https://quarto.org/docs/output-formats/html-themes.html>.
+
+Figuras geradas por R e Python saem com fundo branco, então `styles.css` põe uma
+moldura clara em volta delas no modo escuro. Se preferir gráficos que acompanhem
+o tema, é preciso gerar duas versões da figura --- diga que eu configuro.
+
+## 6. Matemática
 
 **Macros globais** ficam em `_macros.html` e valem em todas as páginas. Já estão
 definidas `\R \N \Z \Q \C \E \P \ind \norm \abs \set \inner \dd \Var \Cov \dist
@@ -102,7 +122,7 @@ Prefixos disponíveis: `thm` (Teorema), `lem`, `cor`, `prp`, `cnj`, `def`, `exm`
 
 **Citações:** entradas em `references.bib`, uso `@walters1982` ou `[@cover2006]`.
 
-## 6. Estrutura
+## 7. Estrutura
 
 ```
 _quarto.yml     configuração do site (título, menu, idioma, rótulos)

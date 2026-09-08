@@ -8,7 +8,7 @@ mjx-container[jax="CHTML"][display="true"] { margin: 1.1em 0; }
 /* Ambientes de teorema com barra lateral, sem caixa colorida. */
 .theorem, .lemma, .corollary, .proposition, .conjecture,
 .definition, .example, .exercise, .remark {
-  border-left: 3px solid #b8c4cf;
+  border-left: 3px solid rgba(130, 145, 165, 0.55);
   padding: 0.2em 0 0.2em 1em;
   margin: 1.3em 0;
 }
@@ -24,3 +24,12 @@ div.sourceCode { border-radius: 4px; font-size: 0.9em; }
 
 /* Listagem de posts. */
 .quarto-listing .listing-title { font-weight: 600; }
+
+/* Modo escuro: figuras geradas por R/Python têm fundo branco, então recebem
+   uma moldura clara em vez de aparecerem como um retângulo estourado. */
+body.quarto-dark .quarto-figure img,
+body.quarto-dark p > img {
+  background: #fff;
+  padding: 6px;
+  border-radius: 4px;
+}
