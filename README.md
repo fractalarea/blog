@@ -13,7 +13,19 @@ GitHub publica o HTML.
 | **Python** + `jupyter matplotlib numpy` | `pip install jupyter matplotlib numpy` | chunks ```` ```{python} ```` |
 
 No VS Code, instale a extensão *Quarto*; no RStudio (≥ 2022.07) o suporte já vem
-embutido e o botão **Render** funciona direto.
+embutido e o botão **Render** funciona direto. Atenção: o RStudio traz uma cópia
+própria do Quarto, que **não** serve para a linha de comando --- o `postar.bat`
+precisa da instalação avulsa.
+
+Depois de instalar, **feche e reabra** o terminal (o instalador mexe no `PATH`, e
+processo já aberto mantém o antigo) e rode:
+
+```bash
+quarto check
+```
+
+Ele verifica a instalação e diz se encontrou o R, o `knitr`, o Python e o
+Jupyter. É o diagnóstico oficial; use-o antes de suspeitar do resto.
 
 ## 2. Abrir localmente
 
