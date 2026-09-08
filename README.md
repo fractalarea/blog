@@ -17,9 +17,13 @@ embutido e o botão **Render** funciona direto.
 
 ## 2. Abrir localmente
 
-**Sem instalar nada (agora):** abra `previa\index.html` com duplo clique. É uma
-cópia autossuficiente do site --- um retrato congelado, só para ver o resultado.
-Ela **não** se atualiza quando você edita os `.qmd`.
+**Sem instalar nada (agora):** duplo clique em `ABRIR-PREVIA.html`, na raiz da
+pasta. É uma cópia do site já renderizado --- um retrato congelado, só para ver
+o resultado. Ela **não** se atualiza quando você edita os `.qmd`.
+
+Não abra `_macros.html`: no Quarto, arquivos com `_` na frente são fragmentos,
+não páginas. Esse em particular só contém a caixa invisível das macros LaTeX,
+então o navegador mostra uma página em branco.
 
 **Do jeito de trabalhar de verdade** (depois de instalar o Quarto), no terminal
 dentro da pasta do blog:
