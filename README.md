@@ -137,6 +137,29 @@ Rotina completa de um post com código, então: copie `posts/_modelo/` para
 `posts/AAAA-MM-DD-slug/`, escreva o `index.qmd`, confira com `quarto preview`, e
 dê um duplo clique em `postar.bat`.
 
+### Tirar um post do ar
+
+Renomeie a pasta pondo `_` na frente:
+
+```
+posts/2026-09-08-teste  ->  posts/_2026-09-08-teste
+```
+
+O Quarto ignora pasta que comece com `_`: a página deixa de ser gerada, some da
+capa e some do RSS. O texto continua no repositório, e um `mv` de volta o
+republica. Para voltar atrás de vez, `git log` guarda tudo.
+
+Cuidado: quem tiver o endereço antigo passa a receber 404 --- é remoção mesmo, não
+ocultação. Se o post já circulou e você quer preservar o link, veja `aliases` na
+documentação do Quarto, que cria um redirecionamento.
+
+**Não confunda com `draft: true`.** Medi os dois: com `draft: true` a página
+*continua existindo* no endereço dela, apenas sai da listagem e do feed. Serve
+para rascunho que você ainda está escrevendo, não para despublicar.
+
+Para apagar de vez, basta apagar a pasta --- o `postar.bat` usa `git add -A`, que
+registra remoções.
+
 ## 5. Tema claro e escuro
 
 `_quarto.yml` declara dois temas (`cosmo` e `darkly`); o botão de alternância
