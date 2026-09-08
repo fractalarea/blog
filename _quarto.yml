@@ -9,7 +9,7 @@ lang: pt
 
 website:
   title: "Notas de João Paulo"
-  description: "Matemática, estatística e ciência de dados"
+  description: "Uma coisa de cada vez e tudo ao mesmo tempo"
   site-url: "https://SEU-USUARIO.github.io/blog"
   navbar:
     left:

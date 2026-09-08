@@ -1,6 +1,7 @@
 ---
 title: "Notas de João Paulo"
-subtitle: "Matemática, estatística e ciência de dados"
+subtitle: "Uma coisa de cada vez e tudo ao mesmo tempo"
+description: "Uma coisa de cada vez e tudo ao mesmo tempo"
 listing:
   contents: posts
   sort: "date desc"
