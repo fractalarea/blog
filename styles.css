@@ -33,3 +33,29 @@ body.quarto-dark p > img {
   padding: 6px;
   border-radius: 4px;
 }
+
+/* ---- Margem direita: posts recentes e arquivo por ano/mes ---- */
+.margem-blog { font-size: 0.85rem; margin-bottom: 1.5rem; }
+.margem-blog .mb-secao + .mb-secao { margin-top: 1.1rem; }
+.margem-blog h5 {
+  font-size: 0.875rem; font-weight: 600; margin: 0 0 0.45rem; opacity: 0.8;
+}
+.margem-blog .mb-lista { list-style: none; padding: 0; margin: 0; }
+.margem-blog .mb-lista li { margin: 0 0 0.4rem; line-height: 1.3; }
+.margem-blog .mb-lista a { text-decoration: none; }
+.margem-blog .mb-lista a:hover { text-decoration: underline; }
+
+.margem-blog details { margin: 0; }
+.margem-blog summary {
+  cursor: pointer; list-style: none;
+  display: flex; align-items: baseline; gap: 0.3rem; padding: 0.12rem 0;
+}
+.margem-blog summary::-webkit-details-marker { display: none; }
+.margem-blog summary::before {
+  content: "\25B8"; opacity: 0.45; font-size: 0.8em; width: 0.7em; flex: none;
+}
+.margem-blog details[open] > summary::before { content: "\25BE"; }
+.margem-blog summary > span:first-of-type { flex: 1; }
+.margem-blog .mb-n { opacity: 0.45; font-variant-numeric: tabular-nums; }
+.margem-blog .mb-mes { margin-left: 0.85rem; }
+.margem-blog .mb-mes .mb-lista { margin: 0.15rem 0 0.45rem 1rem; }

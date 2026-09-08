@@ -20,6 +20,7 @@ website:
     right:
       - icon: rss
         href: index.xml
+  margin-header: _margem.html
   page-footer:
     center: "Construído com [Quarto](https://quarto.org). Conteúdo sob [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.pt-br)."
 
@@ -33,6 +34,7 @@ format:
     toc-depth: 3
     html-math-method: mathjax
     include-before-body: _macros.html
+    include-after-body: _margem-js.html
     code-tools: true
     code-copy: true
     highlight-style: github

@@ -1,0 +1,106 @@
+<script>
+(function () {
+  var box = document.getElementById("margem-blog");
+  if (!box) return;
+
+  function filho(el, nome) {
+    for (var i = 0; i < el.children.length; i++) {
+      if (el.children[i].tagName === nome) return el.children[i].textContent;
+    }
+    return "";
+  }
+
+  // A raiz do site: o link da marca na navbar aponta para ela, e o Quarto
+  // reescreve esse caminho conforme a profundidade da página.
+  // Cuidado: esse href costuma ser "./index.html" ou "../../index.html", e nao
+  // um diretorio. O new URL(".", ...) devolve a pasta que o contem.
+  var marca = document.querySelector(".navbar-brand");
+  var alvo = new URL(marca ? marca.getAttribute("href") : ".", location.href);
+  var raiz = new URL(".", alvo).href;
+
+  fetch(raiz + "index.xml", { cache: "no-cache" })
+    .then(function (r) { if (!r.ok) throw 0; return r.text(); })
+    .then(function (txt) {
+      var doc = new DOMParser().parseFromString(txt, "application/xml");
+      if (doc.querySelector("parsererror")) throw 0;
+
+      var canal = doc.querySelector("channel");
+      var base = canal ? filho(canal, "link") : "";
+      if (base && base.slice(-1) !== "/") base += "/";
+
+      var posts = [].map.call(doc.getElementsByTagName("item"), function (it) {
+        var link = filho(it, "link");
+        var rel = base && link.indexOf(base) === 0 ? link.slice(base.length) : link;
+        rel = rel.replace(/^\//, "");
+        if (rel && !/\.[a-z]+$/i.test(rel) && rel.slice(-1) !== "/") rel += "/";
+        return { titulo: filho(it, "title"), href: raiz + rel, data: new Date(filho(it, "pubDate")) };
+      }).filter(function (p) { return p.titulo && !isNaN(p.data.getTime()); });
+
+      if (!posts.length) throw 0;
+      posts.sort(function (a, b) { return b.data - a.data; });
+
+      var ul = document.getElementById("mb-recentes");
+      posts.slice(0, 5).forEach(function (p) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = p.href;
+        a.textContent = p.titulo;
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+
+      var anos = {};
+      posts.forEach(function (p) {
+        var y = p.data.getUTCFullYear(), m = p.data.getUTCMonth();
+        (anos[y] = anos[y] || {})[m] = (anos[y][m] || []).concat([p]);
+      });
+
+      var arq = document.getElementById("mb-arquivo");
+      var chaves = Object.keys(anos).sort(function (a, b) { return b - a; });
+      chaves.forEach(function (y, iy) {
+        var dAno = document.createElement("details");
+        dAno.className = "mb-ano";
+        if (iy === 0) dAno.open = true;
+        var total = 0;
+        Object.keys(anos[y]).forEach(function (m) { total += anos[y][m].length; });
+        var sAno = document.createElement("summary");
+        sAno.innerHTML = "<span>" + y + "</span>";
+        var nAno = document.createElement("span");
+        nAno.className = "mb-n";
+        nAno.textContent = total;
+        sAno.appendChild(nAno);
+        dAno.appendChild(sAno);
+
+        Object.keys(anos[y]).sort(function (a, b) { return b - a; }).forEach(function (m) {
+          var dMes = document.createElement("details");
+          dMes.className = "mb-mes";
+          var sMes = document.createElement("summary");
+          var nome = new Date(Date.UTC(y, m, 1)).toLocaleDateString("pt-BR", { month: "long", timeZone: "UTC" });
+          sMes.innerHTML = "<span>" + nome + "</span>";
+          var nMes = document.createElement("span");
+          nMes.className = "mb-n";
+          nMes.textContent = anos[y][m].length;
+          sMes.appendChild(nMes);
+          dMes.appendChild(sMes);
+
+          var lst = document.createElement("ul");
+          lst.className = "mb-lista";
+          anos[y][m].forEach(function (p) {
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            a.href = p.href;
+            a.textContent = p.titulo;
+            li.appendChild(a);
+            lst.appendChild(li);
+          });
+          dMes.appendChild(lst);
+          dAno.appendChild(dMes);
+        });
+        arq.appendChild(dAno);
+      });
+
+      box.hidden = false;
+    })
+    .catch(function (e) { console.warn("MARGEM FALHOU:", e && e.stack ? e.stack : e); box.remove(); });
+})();
+</script>
