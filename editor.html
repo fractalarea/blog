@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Editor do blog</title>
+<style>
+  :root {
+    --fundo: #fbfbfa; --caixa: #fff; --texto: #1d2126; --suave: #6b7480;
+    --borda: #d8dde3; --acento: #1b4965; --ok: #2f6f4e; --erro: #a33a3a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --fundo:#15181c; --caixa:#1d2126; --texto:#e6e8ea; --suave:#98a1ac;
+            --borda:#333a42; --acento:#8ab4d8; --ok:#7fc4a0; --erro:#e08b8b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--fundo); color:var(--texto);
+         font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  header { display:flex; align-items:center; gap:1rem; padding:.7rem 1.1rem;
+           border-bottom:1px solid var(--borda); background:var(--caixa); flex-wrap:wrap; }
+  header h1 { font-size:1rem; margin:0; font-weight:600; }
+  main { padding:1.1rem; max-width:1100px; margin:0 auto; }
+  label { display:block; font-size:.8rem; color:var(--suave); margin-bottom:.25rem; }
+  input, select, textarea, button {
+    font-family:inherit; font-size:.92rem; color:var(--texto); background:var(--caixa);
+    border:1px solid var(--borda); border-radius:5px; padding:.45rem .6rem;
+  }
+  textarea { width:100%; min-height:58vh; font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+             font-size:.88rem; line-height:1.55; resize:vertical; tab-size:2; }
+  .linha { display:flex; gap:.8rem; align-items:flex-end; flex-wrap:wrap; margin-bottom:.9rem; }
+  .linha > div { flex:1; min-width:200px; }
+  button { cursor:pointer; font-weight:500; }
+  button:hover { border-color:var(--acento); }
+  button.primario { background:var(--acento); border-color:var(--acento); color:#fff; padding:.55rem 1.4rem; font-weight:600; }
+  button.primario:disabled { opacity:.5; cursor:progress; }
+  #estado { font-size:.85rem; color:var(--suave); margin-left:auto; }
+  #estado.ok { color:var(--ok); } #estado.erro { color:var(--erro); }
+  #autoaviso { font-style:italic; opacity:.75; }
+  #autoaviso.fixo { text-decoration:line-through; opacity:.45; }
+  a.previa { display:inline-block; margin-left:.6rem; font-size:.85rem; color:var(--acento); }
+  pre#log { background:var(--caixa); border:1px solid var(--borda); border-radius:5px;
+            padding:.7rem .9rem; font-size:.8rem; max-height:300px; overflow:auto;
+            white-space:pre-wrap; margin-top:1rem; }
+  .oculto { display:none; }
+  .dica { font-size:.8rem; color:var(--suave); margin-top:.4rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Editor do blog</h1>
+  <select id="abrir"><option value="">— abrir post existente —</option></select>
+  <button id="novo">Novo post</button>
+  <span id="estado"></span>
+</header>
+
+<main>
+  <div class="linha">
+    <div style="flex:0 0 340px">
+      <label for="pasta">Pasta do post <span id="autoaviso">— gerada do título</span></label>
+      <input id="pasta" style="width:100%" placeholder="2026-09-12-meu-post">
+    </div>
+    <div style="flex:1">
+      <label for="mensagem">Mensagem do commit</label>
+      <input id="mensagem" style="width:100%" placeholder="Post novo: ...">
+    </div>
+    <div style="flex:0 0 auto">
+      <button id="salvar">Salvar</button>
+      <button id="renderizar">Renderizar</button>
+      <button id="postar" class="primario">Postar</button>
+    </div>
+  </div>
+
+  <textarea id="texto" spellcheck="false" placeholder="Escolha um post acima, ou clique em Novo post."></textarea>
+  <p class="dica">Ctrl+S salva. <b>Renderizar</b> gera o site e abre a prévia. <b>Postar</b> faz tudo: salva, renderiza, commita e envia para o GitHub.</p>
+
+  <pre id="log" class="oculto"></pre>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const estado = (txt, classe) => { $("estado").textContent = txt; $("estado").className = classe || ""; };
+
+function mostraLog(txt) { $("log").textContent = txt; $("log").classList.remove("oculto"); }
+
+async function api(rota, dados) {
+  const r = await fetch(rota, {
+    method: dados ? "POST" : "GET",
+    headers: { "Content-Type": "application/json" },
+    body: dados ? JSON.stringify(dados) : undefined
+  });
+  return r.json();
+}
+
+async function carregaLista() {
+  const posts = await api("/api/posts");
+  const sel = $("abrir");
+  sel.length = 1;
+  posts.forEach(p => {
+    const o = document.createElement("option");
+    o.value = p.pasta;
+    o.textContent = p.titulo + (p.oculto ? "  (fora do ar)" : "");
+    sel.appendChild(o);
+  });
+}
+
+// A pasta acompanha o título até você editá-la à mão; daí em diante fica fixa.
+let pastaManual = false;
+function fixaPasta(v) { pastaManual = v; $("autoaviso").className = v ? "fixo" : ""; }
+$("pasta").addEventListener("input", () => fixaPasta(true));
+
+function slug(t) {
+  return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 45);
+}
+function hoje() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" +
+         String(d.getDate()).padStart(2, "0");
+}
+function derivaPasta() {
+  if (pastaManual) return;
+  const t = $("texto").value;
+  const mt = t.match(/^title:[ \t]*"?(.*?)"?[ \t]*$/m);
+  const md = t.match(/^date:[ \t]*"?(\d{4}-\d{2}-\d{2})"?/m);
+  if (!mt) return;
+  const s = slug(mt[1]);
+  if (s) $("pasta").value = (md ? md[1] : hoje()) + "-" + s;
+}
+$("texto").addEventListener("input", derivaPasta);
+
+$("abrir").onchange = async (e) => {
+  if (!e.target.value) return;
+  const r = await api("/api/ler", { pasta: e.target.value });
+  if (r.ok) {
+    $("texto").value = r.texto;
+    $("pasta").value = e.target.value;
+    fixaPasta(true);
+    estado("aberto", "");
+  } else { estado(r.erro, "erro"); }
+};
+
+$("novo").onclick = async () => {
+  const titulo = prompt("Título do post:");
+  if (!titulo) return;
+  const hoje = new Date();
+  const d = hoje.getFullYear() + "-" +
+            String(hoje.getMonth() + 1).padStart(2, "0") + "-" +
+            String(hoje.getDate()).padStart(2, "0");
+  const slug = titulo.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+  const modelo = await api("/api/ler", { pasta: "_modelo" });
+  let base = modelo.ok ? modelo.texto : '---\ntitle: ""\ndate: ""\n---\n\n';
+  base = base.replace(/^title:.*$/m, 'title: "' + titulo.replace(/"/g, "'") + '"')
+             .replace(/^date:.*$/m, 'date: "' + d + '"');
+  $("texto").value = base;
+  $("mensagem").value = "Post novo: " + titulo;
+  $("abrir").value = "";
+  fixaPasta(false);
+  derivaPasta();
+  estado("novo post — ainda não salvo", "");
+};
+
+async function salvar() {
+  const pasta = $("pasta").value.trim();
+  if (!pasta) { estado("informe a pasta", "erro"); return false; }
+  const r = await api("/api/salvar", { pasta: pasta, texto: $("texto").value });
+  if (r.ok) { estado("salvo", "ok"); await carregaLista(); $("abrir").value = pasta; return true; }
+  estado(r.erro, "erro");
+  return false;
+}
+
+$("salvar").onclick = salvar;
+
+$("renderizar").onclick = async () => {
+  if (!await salvar()) return;
+  $("renderizar").disabled = true;
+  estado("renderizando…", "");
+  mostraLog("renderizando…");
+  try {
+    const r = await api("/api/renderizar");
+    mostraLog(r.log);
+    if (r.ok) {
+      const p = $("pasta").value.trim();
+      estado("renderizado", "ok");
+      $("estado").insertAdjacentHTML("afterend",
+        '<a class="previa" target="_blank" href="/previa/posts/' + encodeURIComponent(p) + '/">abrir prévia ↗</a>');
+      document.querySelectorAll("a.previa").forEach((a, i, l) => { if (i < l.length - 1) a.remove(); });
+    } else { estado("falhou na renderização", "erro"); }
+  } finally { $("renderizar").disabled = false; }
+};
+
+$("postar").onclick = async () => {
+  if (!await salvar()) return;
+  $("postar").disabled = true;
+  estado("publicando… isso leva de 30 s a alguns minutos", "");
+  mostraLog("renderizando…");
+  try {
+    const r = await api("/api/postar", { mensagem: $("mensagem").value.trim() });
+    mostraLog(r.log);
+    estado(r.ok ? "publicado — o site atualiza em 1 a 2 minutos" : "falhou, veja o log abaixo", r.ok ? "ok" : "erro");
+  } catch (e) {
+    estado("erro de comunicação com o servidor local", "erro");
+  } finally {
+    $("postar").disabled = false;
+  }
+};
+
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); salvar(); }
+});
+
+carregaLista();
+</script>
+</body>
+</html>
