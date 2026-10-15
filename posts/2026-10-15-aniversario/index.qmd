@@ -1,0 +1,14 @@
+---
+title: "Aniversário"
+description: |
+  Aniversário
+author: "João Mello"
+date: "2026-10-15"
+categories: [categoria um, categoria dois]
+bibliography: ../../references.bib
+# draft: true      # descomente para escrever sem aparecer na capa
+---
+
+## Mensagem do dia 15 de outubro de 2026
+
+Hoje fiz 43 anos.
