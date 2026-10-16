@@ -1,10 +1,10 @@
 ---
 title: "Aniversário"
 description: |
-  Aniversário
+  Mais um ano se passou
 author: "João Mello"
 date: "2026-10-15"
-categories: [categoria um, categoria dois]
+categories: [pessoal]
 bibliography: ../../references.bib
 # draft: true      # descomente para escrever sem aparecer na capa
 ---
